@@ -1,0 +1,35 @@
+{
+  "device": "helix-stomp",
+  "name": "HXGen Example",
+  "tempo": 118,
+  "blocks": [
+    {
+      "model": "HD2_DistMinotaur",
+      "params": {
+        "Gain": 4.2,
+        "Tone": 4.8,
+        "Level": 6
+      }
+    },
+    {
+      "model": "HD2_AmpBrit2203",
+      "params": {
+        "Drive": 0.58,
+        "Bass": 0.46,
+        "Mid": 0.57,
+        "Treble": 0.62,
+        "Presence": 0.56,
+        "ChVol": 0.82,
+        "Master": 0.74
+      }
+    },
+    {
+      "model": "HD2_ReverbPlate",
+      "params": {
+        "Decay": 0.44,
+        "Mix": 0.22,
+        "Level": 0
+      }
+    }
+  ]
+}

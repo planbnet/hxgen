@@ -1,0 +1,179 @@
+{
+  "version": 6,
+  "data": {
+    "meta": {
+      "name": "HXGen Example",
+      "application": "HX Edit",
+      "build_sha": "050fc4a",
+      "modifieddate": 1775681378,
+      "appversion": 327680
+    },
+    "device": 2162694,
+    "tone": {
+      "dsp1": {},
+      "global": {
+        "@variax_volumeknob": -0.1,
+        "@pedalstate": 0,
+        "@variax_customtuning": true,
+        "@variax_str1tuning": 0,
+        "@variax_str2tuning": 0,
+        "@variax_str4tuning": 0,
+        "@variax_str6tuning": 0,
+        "@variax_model": 0,
+        "@model": "@global_params",
+        "@topology0": "A",
+        "@cursor_dsp": 0,
+        "@cursor_path": 0,
+        "@guitarinputZ": 0,
+        "@tempo": 118,
+        "@topology1": "",
+        "@cursor_position": 0,
+        "@variax_lockctrls": 0,
+        "@variax_magmode": false,
+        "@variax_str3tuning": 0,
+        "@variax_str5tuning": 0,
+        "@variax_toneknob": -0.1,
+        "@current_snapshot": 0,
+        "@cursor_group": "block0"
+      },
+      "snapshot1": {
+        "@pedalstate": 0,
+        "@ledcolor": 0,
+        "@name": "SNAPSHOT 2",
+        "@tempo": 118,
+        "@valid": true,
+        "blocks": {
+          "dsp0": {
+            "block0": true,
+            "block1": true,
+            "block2": true
+          }
+        }
+      },
+      "snapshot2": {
+        "@pedalstate": 0,
+        "@ledcolor": 0,
+        "@name": "SNAPSHOT 3",
+        "@tempo": 118,
+        "@valid": true,
+        "blocks": {
+          "dsp0": {
+            "block0": true,
+            "block1": true,
+            "block2": true
+          }
+        }
+      },
+      "dsp0": {
+        "split": {
+          "BalanceA": 0.5,
+          "@model": "HD2_AppDSPFlowSplitY",
+          "@enabled": true,
+          "bypass": false,
+          "@position": 0,
+          "BalanceB": 0.5
+        },
+        "inputA": {
+          "@input": 1,
+          "@model": "HelixStomp_AppDSPFlowInput",
+          "noiseGate": false,
+          "threshold": -48,
+          "decay": 0.5
+        },
+        "inputB": {
+          "@input": 0,
+          "@model": "HelixStomp_AppDSPFlowInput",
+          "noiseGate": false,
+          "threshold": -48,
+          "decay": 0.5
+        },
+        "join": {
+          "@model": "HD2_AppDSPFlowJoin",
+          "B Pan": 0.5,
+          "B Level": 0,
+          "A Level": 0,
+          "A Pan": 0.5,
+          "@position": 3,
+          "Level": 0,
+          "@enabled": true,
+          "B Polarity": false
+        },
+        "outputA": {
+          "@model": "HelixStomp_AppDSPFlowOutputMain",
+          "@output": 1,
+          "pan": 0.5,
+          "gain": 0
+        },
+        "outputB": {
+          "@model": "HelixStomp_AppDSPFlowOutputSend",
+          "@output": 0,
+          "pan": 0.5,
+          "gain": 0,
+          "Type": true
+        },
+        "block0": {
+          "@model": "HD2_DistMinotaur",
+          "@enabled": true,
+          "@path": 0,
+          "@position": 0,
+          "@no_snapshot_bypass": false,
+          "Gain": 0.42,
+          "Tone": 0.48,
+          "Level": 0.6,
+          "@stereo": false
+        },
+        "block1": {
+          "@model": "HD2_AmpBrit2203",
+          "@enabled": true,
+          "@path": 0,
+          "@position": 1,
+          "@no_snapshot_bypass": false,
+          "Drive": 0.58,
+          "Bass": 0.46,
+          "Mid": 0.57,
+          "Treble": 0.62,
+          "Presence": 0.56,
+          "ChVol": 0.82,
+          "Master": 0.74,
+          "Sag": 0.5,
+          "Hum": 0.5,
+          "Ripple": 0.5,
+          "Bias": 0.5,
+          "BiasX": 0.5,
+          "InputType": true,
+          "@bypassvolume": 1
+        },
+        "block2": {
+          "@model": "HD2_ReverbPlate",
+          "@enabled": true,
+          "@path": 0,
+          "@position": 2,
+          "@no_snapshot_bypass": false,
+          "Decay": 0.44,
+          "Predelay": 0.015,
+          "LowCut": 90,
+          "HighCut": 5600,
+          "Mix": 0.22,
+          "Level": 0,
+          "@trails": false
+        }
+      },
+      "snapshot0": {
+        "@pedalstate": 0,
+        "@ledcolor": 0,
+        "@name": "SNAPSHOT 1",
+        "@tempo": 118,
+        "@valid": true,
+        "blocks": {
+          "dsp0": {
+            "block0": true,
+            "block1": true,
+            "block2": true
+          }
+        }
+      }
+    },
+    "device_version": 37814625
+  },
+  "schema": "L6Preset"
+}

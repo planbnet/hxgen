@@ -1,5 +1,20 @@
 use crate::catalog::{resolve_model, resolve_param};
 use crate::types::{CabSpec, HXBlockSpec, HXModelDef, HXParamDef, HXPresetSpec, NumberOrBool};
+
+fn write_cab_sibling(preset: &mut serde_json::Value, cab_key: &str, cab_spec: &CabSpec) {
+    let mut cab_obj = serde_json::Map::new();
+    cab_obj.insert("@model".to_string(), serde_json::json!(cab_spec.model));
+    cab_obj.insert("@enabled".to_string(), serde_json::json!(true));
+    if let Some(cab_params) = &cab_spec.params {
+        for (k, v) in cab_params {
+            match v {
+                NumberOrBool::Number(n) => { cab_obj.insert(k.clone(), serde_json::json!(n)); }
+                NumberOrBool::Bool(b) => { cab_obj.insert(k.clone(), serde_json::json!(b)); }
+            }
+        }
+    }
+    preset["data"]["tone"]["dsp0"][cab_key] = serde_json::Value::Object(cab_obj);
+}
 use serde_json::{json, Value};
 use std::collections::HashSet;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -188,27 +203,27 @@ pub fn build_preset(spec: HXPresetSpec) -> Result<serde_json::Value, String> {
         
         highest_position = std::cmp::max(highest_position, *pos);
         
-        // Handle A+C slot: link cab via @cab pointer and write sibling cab key
+        if block_spec.cab.is_some() && block_spec.cab_b.is_some() {
+            return Err(format!(
+                "Block \"{}\" has both `cab` and `cabB` — use `cab` for A+C (amp+cab slot) and `cabB` for dual-cab (standalone cab block with two mics).",
+                block_spec.model
+            ));
+        }
+
+        // Handle A+C slot: amp + linked cab (@type 3)
         if let Some(cab_spec) = &block_spec.cab {
             let cab_key = format!("cab{}", cab_index);
             block_obj.insert("@cab".to_string(), json!(cab_key));
-            block_obj.insert("@type".to_string(), json!(3)); // 3 = amp+cab
+            block_obj.insert("@type".to_string(), json!(3));
             block_obj.insert("@bypassvolume".to_string(), json!(1));
-
-            // Build the sibling cab object
-            let mut cab_obj = serde_json::Map::new();
-            cab_obj.insert("@model".to_string(), json!(cab_spec.model));
-            cab_obj.insert("@enabled".to_string(), json!(true));
-            // Write any explicit cab params
-            if let Some(cab_params) = &cab_spec.params {
-                for (k, v) in cab_params {
-                    match v {
-                        NumberOrBool::Number(n) => { cab_obj.insert(k.clone(), json!(n)); }
-                        NumberOrBool::Bool(b) => { cab_obj.insert(k.clone(), json!(b)); }
-                    }
-                }
-            }
-            preset["data"]["tone"]["dsp0"][&cab_key] = Value::Object(cab_obj);
+            write_cab_sibling(&mut preset, &cab_key, cab_spec);
+            cab_index += 1;
+        } else if let Some(cab_b_spec) = &block_spec.cab_b {
+            // Dual cab: this block is cab A, cab_b is cab B (@type 4)
+            let cab_key = format!("cab{}", cab_index);
+            block_obj.insert("@cab".to_string(), json!(cab_key));
+            block_obj.insert("@type".to_string(), json!(4));
+            write_cab_sibling(&mut preset, &cab_key, cab_b_spec);
             cab_index += 1;
         } else if model.symbolic_id.contains("_Amp") {
             block_obj.insert("@type".to_string(), json!(1)); // amp-only
@@ -267,6 +282,8 @@ pub fn decode_preset(raw_preset: serde_json::Value) -> Result<HXPresetSpec, Stri
                     .and_then(|v| v.as_str())
                     .map(|s| s.to_string());
 
+                let block_type = block_val.get("@type").and_then(|v| v.as_i64());
+
                 let mut block = HXBlockSpec {
                     model: model_str.to_string(),
                     enabled: block_val.get("@enabled").and_then(|v| v.as_bool()),
@@ -274,6 +291,7 @@ pub fn decode_preset(raw_preset: serde_json::Value) -> Result<HXPresetSpec, Stri
                     position: block_val.get("@position").and_then(|v| v.as_i64()).map(|v| v as u32),
                     params: Some(std::collections::HashMap::new()),
                     cab: None,
+                    cab_b: None,
                 };
                 
                 let model_def_opt = resolve_model(model_str).ok();
@@ -319,7 +337,7 @@ pub fn decode_preset(raw_preset: serde_json::Value) -> Result<HXPresetSpec, Stri
                     block.params = None;
                 }
 
-                // Handle linked A+C cab slot
+                // Handle linked cab slots: A+C (@type 3) and Dual Cab (@type 4)
                 if let Some(cab_key) = cab_key_opt {
                     if let Some(cab_val) = obj.get(&cab_key) {
                         if let Some(cab_model) = cab_val["@model"].as_str() {
@@ -335,10 +353,15 @@ pub fn decode_preset(raw_preset: serde_json::Value) -> Result<HXPresetSpec, Stri
                                     }
                                 }
                             }
-                            block.cab = Some(CabSpec {
+                            let cab_spec = CabSpec {
                                 model: cab_model.to_string(),
                                 params: if cab_params.is_empty() { None } else { Some(cab_params) },
-                            });
+                            };
+                            if block_type == Some(4) {
+                                block.cab_b = Some(cab_spec);
+                            } else {
+                                block.cab = Some(cab_spec);
+                            }
                         }
                     }
                 }

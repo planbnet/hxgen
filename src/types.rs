@@ -69,6 +69,10 @@ pub struct HXBlockSpec {
     pub params: Option<HashMap<String, NumberOrBool>>,
     /// When set, the amp and cab occupy a single A+C slot (linked via @cab in the .hlx file).
     pub cab: Option<CabSpec>,
+    /// When set, creates a Dual Cab block (@type 4): this block is cab A, cabB is the second cab.
+    /// Both models must be WithPan variants (HD2_CabMicIr_*WithPan). Cannot be combined with `cab`.
+    #[serde(rename = "cabB")]
+    pub cab_b: Option<CabSpec>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]

@@ -69,6 +69,67 @@ Blocks are placed in signal chain order left-to-right. Typical order:
 [Tuner] → [Drive/Boost] → [Amp+Cab] → [Modulation] → [Delay] → [Reverb]
 ```
 
+## Dual Cab block
+
+A Dual Cab block blends two cabs (with independent mic and position settings) in a single DSP slot. This is common for recording-style tones — same cabinet, different mics panned left and right.
+
+Use `cabB` on a standalone cab block. Both models must be `WithPan` variants (`HD2_CabMicIr_*WithPan`).
+
+```json
+{
+  "model": "HD2_CabMicIr_4x121960AT75WithPan",
+  "params": { "Mic": 1, "Distance": 1.5, "Pan": 0.3 },
+  "cabB": {
+    "model": "HD2_CabMicIr_4x121960AT75WithPan",
+    "params": { "Mic": 5, "Distance": 1.0, "Pan": 0.7 }
+  }
+}
+```
+
+`cabB` cannot be combined with `cab`. Use `cab` only on amp blocks (A+C slot).
+
+## Mic index reference
+
+`hxgen show <model>` prints the mic index mapping inline for any cab parameter. The two mic sets used across the catalog:
+
+**Standard cabs** (`@mic` param, range 0–15):
+
+| Index | Mic |
+| :--- | :--- |
+| 0 | 57 Dynamic (Shure SM57) |
+| 1 | 409 Dynamic (Sennheiser e409) |
+| 2 | 421 Dynamic (Sennheiser MD421) |
+| 3 | 30 Dynamic |
+| 4 | 20 Dynamic |
+| 5 | 121 Ribbon (Royer R-121) |
+| 6 | 160 Ribbon (Beyerdynamic M160) |
+| 7 | 4038 Ribbon (Coles 4038) |
+| 8 | 414 Cond (AKG C414) |
+| 9 | 84 Cond (Neumann KM84) |
+| 10 | 67 Cond (Neumann U67) |
+| 11 | 87 Cond (Neumann U87) |
+| 12 | 47 Cond (Neumann U47) |
+| 13 | 112 Dynamic (AKG D112) |
+| 14 | 12 Dynamic |
+| 15 | 7 Dynamic (Shure SM7) |
+
+**IR/WithPan cabs** (`Mic` param, range 0–11):
+
+| Index | Mic |
+| :--- | :--- |
+| 0 | 57 Dynamic (Shure SM57) |
+| 1 | 421 Dynamic (Sennheiser MD421) |
+| 2 | 7 Dynamic (Shure SM7) |
+| 3 | 906 Dynamic (Sennheiser e906) |
+| 4 | 30 Dynamic |
+| 5 | 121 Ribbon (Royer R-121) |
+| 6 | 160 Ribbon (Beyerdynamic M160) |
+| 7 | 4038 Ribbon (Coles 4038) |
+| 8 | 84 Ribbon |
+| 9 | 414 Cond (AKG C414) |
+| 10 | 47 Cond FET |
+| 11 | 67 Cond (Neumann U67) |
+
 ## Minimal working example
 
 ```json

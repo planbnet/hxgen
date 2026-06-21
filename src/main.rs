@@ -107,6 +107,7 @@ fn write_example_spec(output_path: Option<PathBuf>) {
                 position: None,
                 params: Some(minotaur_params),
                 cab: None,
+                cab_b: None,
             },
             types::HXBlockSpec {
                 model: "HD2_AmpBrit2203".to_string(),
@@ -115,6 +116,7 @@ fn write_example_spec(output_path: Option<PathBuf>) {
                 position: None,
                 params: Some(brit_params),
                 cab: None,
+                cab_b: None,
             },
             types::HXBlockSpec {
                 model: "HD2_ReverbPlate".to_string(),
@@ -123,6 +125,7 @@ fn write_example_spec(output_path: Option<PathBuf>) {
                 position: None,
                 params: Some(reverb_params),
                 cab: None,
+                cab_b: None,
             },
         ],
     };
@@ -213,6 +216,13 @@ fn show_model(input: &str, as_json: bool) {
                     param.name,
                     catalog::format_param_range(param)
                 );
+                if let Some(dt) = &param.display_type {
+                    if dt == "mic" {
+                        println!("    Mic indices: 0=57 Dynamic, 1=409 Dynamic, 2=421 Dynamic, 3=30 Dynamic, 4=20 Dynamic, 5=121 Ribbon, 6=160 Ribbon, 7=4038 Ribbon, 8=414 Cond, 9=84 Cond, 10=67 Cond, 11=87 Cond, 12=47 Cond, 13=112 Dynamic, 14=12 Dynamic, 15=7 Dynamic");
+                    } else if dt == "cabMICir" {
+                        println!("    Mic indices: 0=57 Dynamic, 1=421 Dynamic, 2=7 Dynamic, 3=906 Dynamic, 4=30 Dynamic, 5=121 Ribbon, 6=160 Ribbon, 7=4038 Ribbon, 8=84 Ribbon, 9=414 Cond, 10=47 Cond FET, 11=67 Cond");
+                    }
+                }
             }
         }
         Err(e) => {

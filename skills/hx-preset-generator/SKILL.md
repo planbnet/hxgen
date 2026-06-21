@@ -76,6 +76,7 @@ Rules:
 - `model` — symbolic ID from `hxgen list` (e.g. `HD2_AmpBrit2203`)
 - `params` — only parameters you want to override; rest use Helix defaults
 - `cab` — put the cab inside the amp block for A+C slot mode (most common); or add it as its own entry in `blocks`
+- `cabB` — add a second cab to a standalone cab block for Dual Cab mode (both must be `WithPan` models); cannot be combined with `cab`
 - Block order = signal chain order (left to right)
 - Parameter values use the native Helix ranges from `hxgen show`, not normalized 0–1
 

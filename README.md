@@ -1,54 +1,54 @@
 # hxgen
 
-Standalone CLI for generating Line 6 Helix Stomp `.hlx` preset files.
+A standalone CLI for generating Line 6 Helix Stomp `.hlx` preset files from a simple JSON spec.
 
-## Commands
+You describe a signal chain — amps, cabs, pedals, effects — in a compact JSON format, and `hxgen` compiles it into a `.hlx` file ready to load onto your device. It also includes a full searchable catalog of every Helix model with parameter ranges, and can decode existing presets back to JSON for inspection or editing.
 
-```bash
-hxgen list
-hxgen list amp marshall
-hxgen show HD2_AmpBrit2203
-hxgen generate --input ./my-preset.json --output ./my-preset.hlx
-hxgen example
+## Installation
 
-# Using cargo directly:
-cargo run -- list amp
-```
+Download the pre-built binary for your platform from the [latest release](../../releases/latest) and place it somewhere in your `PATH` (e.g. `/usr/local/bin/hxgen`).
 
-## Browsing the Catalog
+Or build from source:
 
-You can easily search through the bundled model database using the `list` and `show` commands.
-
-*   **View Full Catalog**: Run `hxgen list` to output all available models.
-*   **Filter by Category**: Run `hxgen list <category>` (e.g., `hxgen list amp`, `hxgen list cab`, `hxgen list reverb`).
-*   **Fuzzy Search**: Add a search term to find models by name, ID, or real-world source. For example, `hxgen list amp marshall` will return all amps based on Marshall hardware.
-*   **View Model Details**: Run `hxgen show <Model_ID>` to view the full descriptions, real-world source, and all adjustable parameters with their valid numerical ranges.
-
-## Building & Installation
-
-This tool has been ported to Rust and compiles into a single, standalone binary. 
-
-To build the optimized release executable:
 ```bash
 cargo build --release
+# binary at: target/release/hx-preset-generator
 ```
-The compiled binary will be located at `target/release/hx-preset-generator` (or `hxgen`). You can move this executable anywhere in your system `PATH` (like `/usr/local/bin`) to use it globally.
 
-## Modifying the Device Database
+## Quick Start
 
-The model catalog, descriptions, and preset templates are baked directly into the binary at compile time. 
+```bash
+# Browse all available models
+hxgen list
 
-If you want to update descriptions or add new models:
-1. Edit `data/models.json` or `data/template.json`.
-2. Run `cargo build --release` again.
-3. The binary will automatically include your changes.
+# Filter by category
+hxgen list amp
+hxgen list amp marshall
+
+# Inspect a model's parameters and ranges
+hxgen show HD2_AmpBrit2203
+
+# Generate a preset from a JSON spec
+hxgen generate --input my-preset.json --output my-preset.hlx
+
+# Decode an existing .hlx back to JSON
+hxgen decode --input my-preset.hlx
+
+# Print an example spec to stdout
+hxgen example
+
+# Output the JSON Schema for the spec format
+hxgen schema
+```
 
 ## Spec Format
+
+Create a JSON file describing your signal chain:
 
 ```json
 {
   "device": "helix-stomp",
-  "name": "HXGen Example",
+  "name": "My Preset",
   "tempo": 118,
   "blocks": [
     {
@@ -66,6 +66,9 @@ If you want to update descriptions or add new models:
         "Bass": 0.46,
         "Mid": 0.57,
         "Treble": 0.62
+      },
+      "cab": {
+        "model": "HD2_CabBrit4x12V30"
       }
     },
     {
@@ -79,8 +82,44 @@ If you want to update descriptions or add new models:
 }
 ```
 
-## Notes
+- **`model`** — the symbolic ID from `hxgen list` / `hxgen show`
+- **`params`** — only include parameters you want to override; everything else uses the Helix default
+- **`cab`** — attach a cabinet directly to an amp block (A+C slot); or add it as a standalone block in `blocks`
+- **Parameter values** use the native Helix ranges shown by `hxgen show <model>`
 
-- Helix Stomp is the only exposed target for now, but the code is structured around device profiles so more Helix-family devices can be added later.
-- Model lookup accepts either the symbolic ID or the exact display name.
-- Parameter values use the native Helix ranges shown by `hxgen show <model>`, and out-of-range values are rejected.
+## Catalog
+
+The bundled catalog covers the full Helix model library — amps, cabs, distortions, modulations, delays, reverbs, pitch effects, filters, and utilities.
+
+```bash
+hxgen list              # all models
+hxgen list reverb       # reverbs only
+hxgen list amp fender   # Fender-based amps
+hxgen show HD2_ReverbPlate  # full parameter details
+```
+
+## Transferring to Device
+
+`hxgen` generates `.hlx` files only — it does not connect to the Helix over USB. Transfer the file using one of:
+
+- **HX Edit** (Line 6's official editor) — drag the `.hlx` into a preset slot
+- **USB mass storage** — copy the file directly when the Helix is mounted as a drive
+
+## Updating the Catalog
+
+The catalog is embedded in the binary at compile time from `data/models.json`. To regenerate it from a local HX Edit installation:
+
+```bash
+# Extract from HX Edit app bundle
+node extract_hxedit_catalog.js
+
+# Optionally enrich with descriptions from amplib
+node enhance_models.js
+
+# Rebuild the binary
+cargo build --release
+```
+
+## For AI Agents
+
+See [AGENTS.md](AGENTS.md) for a structured guide on using `hxgen` as a tool in an agentic workflow (catalog search, spec generation, validation, delivery).

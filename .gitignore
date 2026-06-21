@@ -1,5 +1,10 @@
 /target
 /amplib/
 hxgen-example.json
+*.hlx
+!examples/*.hlx
 .DS_Store
 node_modules/
+*.env
+.env*
+

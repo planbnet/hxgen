@@ -6,7 +6,7 @@ You describe a signal chain — amps, cabs, pedals, effects — in a compact JSO
 
 ## Installation
 
-Download the pre-built binary for your platform from the [latest release](../../releases/latest) and place it somewhere in your `PATH` (e.g. `/usr/local/bin/hxgen`).
+Download the pre-built binary for your platform from the [latest release](https://github.com/planbnet/hxgen/releases/latest) and place it somewhere in your `PATH` (e.g. `/usr/local/bin/hxgen`).
 
 Or build from source:
 
@@ -122,4 +122,4 @@ cargo build --release
 
 ## For AI Agents
 
-See [AGENTS.md](AGENTS.md) for a structured guide on using `hxgen` as a tool in an agentic workflow (catalog search, spec generation, validation, delivery).
+An [agentskills.io](https://agentskills.io)-compatible skill is available at [`skills/hx-preset-generator/`](skills/hx-preset-generator/). It guides coding agents through translating a tone description (e.g. from a YouTube transcript) into a working preset file.
